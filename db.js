@@ -1,11 +1,7 @@
-const sqlite3 = require("sqlite3").verbose();
+const Database = require("better-sqlite3");
 
-const db = new sqlite3.Database("./database.sqlite", (err) => {
-  if (err) {
-    console.error("Database connection failed:", err.message);
-  } else {
-    console.log("SQLite database connected");
-  }
-});
+const db = new Database("teacher_substitution.db");
+
+console.log("SQLite database connected");
 
 module.exports = db;

@@ -1,535 +1,676 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Substitution Reports - TSS</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Teacher Substitution Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      color: #333;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
 
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
 
-    /* Sidebar Styles */
-    .sidebar {
-      width: 260px;
-      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-      padding: 30px 20px;
-      color: white;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-      box-shadow: 2px 0 15px rgba(102, 126, 234, 0.2);
-    }
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 0;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .sidebar h2 {
-      font-size: 28px;
-      margin-bottom: 40px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
+        .sidebar h2 {
+            padding: 0 20px 30px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
 
-    .sidebar button {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 10px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      text-align: left;
-      border-left: 3px solid transparent;
-    }
+        .sidebar ul {
+            list-style: none;
+        }
 
-    .sidebar button:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-left-color: #fff;
-      transform: translateX(5px);
-    }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
 
-    /* Main Content */
-    .main-content {
-      margin-left: 260px;
-      flex: 1;
-      padding: 40px;
-      overflow-y: auto;
-    }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
 
-    h1 {
-      color: #667eea;
-      margin-bottom: 10px;
-      font-size: 32px;
-      font-weight: 700;
-    }
+        .sidebar ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+        }
 
-    .page-subtitle {
-      color: #999;
-      margin-bottom: 30px;
-      font-size: 14px;
-    }
+        .sidebar ul li a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left-color: #fff;
+            font-weight: 600;
+        }
 
-    /* Action Bar */
-    .action-bar {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 30px;
+        }
 
-    .print-btn {
-      padding: 12px 30px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin: -30px -30px 30px -30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-    .print-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
 
-    .print-btn:active {
-      transform: translateY(0);
-    }
+        .header p {
+            opacity: 0.95;
+            font-size: 14px;
+        }
 
-    /* Table Styles */
-    .table-section {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      overflow-x: auto;
-    }
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
 
-    .table-section h2 {
-      color: #333;
-      margin-bottom: 25px;
-      font-size: 20px;
-      font-weight: 600;
-    }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
 
-    table thead {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
+        .btn-primary:hover {
+            background-color: #5568d3;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
 
-    table th {
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+        .btn-secondary {
+            background-color: #48bb78;
+            color: white;
+        }
 
-    table td {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-    }
+        .btn-secondary:hover {
+            background-color: #38a169;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+        }
 
-    table tbody tr {
-      transition: all 0.2s ease;
-    }
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
 
-    table tbody tr:hover {
-      background-color: #f9fafb;
-      box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.1);
-    }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    table tbody tr:last-child td {
-      border-bottom: none;
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #999;
-    }
+        .card h3 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
+        .card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+        }
 
-    .empty-state p {
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
+        /* Tables */
+        .report-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
 
-    /* Loading State */
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #667eea;
-    }
+        .report-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
 
-    .spinner {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #667eea;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        table thead {
+            background-color: #f8f9fa;
+        }
 
-    /* Status Badge */
-    .status-badge {
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .status-badge.completed {
-      background-color: #d4edda;
-      color: #155724;
-    }
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+        }
 
-    .status-badge.pending {
-      background-color: #fff3cd;
-      color: #856404;
-    }
+        table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
 
-    .status-badge.cancelled {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-    /* Message */
-    #message {
-      margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 8px;
-      font-weight: 500;
-      display: none;
-      border-left: 4px solid;
-      animation: slideIn 0.3s ease;
-    }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
 
-    #message.success {
-      background-color: #d4edda;
-      color: #155724;
-      border-left-color: #28a745;
-      display: block;
-    }
+        .empty-state p {
+            font-size: 14px;
+        }
 
-    #message.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border-left-color: #f5c6cb;
-      display: block;
-    }
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-      .sidebar {
-        width: 220px;
-      }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
 
-      .main-content {
-        margin-left: 220px;
-        padding: 30px;
-      }
-    }
+        /* Alert Styles */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        left: -260px;
-        height: 100vh;
-        z-index: 1000;
-        width: 260px;
-        transition: left 0.3s ease;
-      }
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
 
-      .sidebar.active {
-        left: 0;
-      }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                padding: 20px 0;
+            }
 
-      .main-content {
-        margin-left: 0;
-        padding: 20px;
-      }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
 
-      .menu-toggle {
-        display: block;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 999;
-        background: #667eea;
-        border: none;
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 24px;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      }
+            .header {
+                margin: -20px -20px 20px -20px;
+            }
 
-      h1 {
-        font-size: 24px;
-      }
+            .header h1 {
+                font-size: 24px;
+            }
 
-      .table-section {
-        padding: 20px;
-      }
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
 
-      table th,
-      table td {
-        padding: 10px;
-        font-size: 12px;
-      }
+            .button-group {
+                flex-direction: column;
+            }
 
-      .print-btn {
-        width: 100%;
-      }
-    }
+            button {
+                width: 100%;
+            }
 
-    @media (max-width: 480px) {
-      .table-section {
-        padding: 15px;
-      }
+            table {
+                font-size: 12px;
+            }
 
-      table {
-        font-size: 12px;
-      }
+            table th, table td {
+                padding: 8px;
+            }
 
-      table th,
-      table td {
-        padding: 8px 5px;
-      }
+            .sidebar h2 {
+                padding: 0 15px 15px;
+                font-size: 18px;
+            }
 
-      h1 {
-        font-size: 20px;
-      }
+            .sidebar ul li a {
+                padding: 10px 15px;
+            }
+        }
 
-      .table-section h2 {
-        font-size: 18px;
-      }
-    }
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 18px;
+            }
 
-    @media print {
-      .sidebar,
-      .action-bar,
-      .menu-toggle {
-        display: none;
-      }
+            .card .value {
+                font-size: 28px;
+            }
 
-      .main-content {
-        margin-left: 0;
-        padding: 0;
-      }
+            .report-section h2 {
+                font-size: 16px;
+            }
+        }
 
-      body {
-        background: white;
-      }
+        /* Print Styles */
+        @media print {
+            .sidebar {
+                display: none;
+            }
 
-      .table-section {
-        box-shadow: none;
-      }
-    }
-  </style>
+            .main-content {
+                margin-left: 0;
+            }
+
+            .button-group {
+                display: none;
+            }
+
+            .header {
+                margin: 0;
+                padding: 20px;
+                page-break-after: avoid;
+            }
+
+            .card {
+                page-break-inside: avoid;
+            }
+
+            .report-section {
+                page-break-inside: avoid;
+                page-break-before: avoid;
+            }
+
+            table {
+                page-break-inside: avoid;
+            }
+
+            body {
+                background-color: white;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="teachers.html">Teachers</a></li>
+                <li><a href="timetable.html">Timetable</a></li>
+                <li><a href="substitution.html">Substitutions</a></li>
+                <li><a href="reports.html" class="active">Reports</a></li>
+            </ul>
+        </div>
 
-<div class="container">
-  <div class="sidebar" id="sidebar">
-    <h2>TSS</h2>
-    <button onclick="navigateTo('/dashboard.html')">Dashboard</button>
-    <button onclick="navigateTo('/teachers.html')">Teachers</button>
-    <button onclick="navigateTo('/timetable.html')">Timetable</button>
-    <button onclick="navigateTo('/substitutions.html')">Substitutions</button>
-    <button onclick="navigateTo('/reports.html')">Reports</button>
-    <button onclick="logout()">Logout</button>
-  </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Reports</h1>
+                <p>Comprehensive reports and analytics for your substitution management system</p>
+            </div>
 
-  <div class="main-content">
-    <h1>Substitution Reports</h1>
-    <p class="page-subtitle">View all substitution records and reports</p>
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="btn-primary" onclick="printReport()">
+                    <span>🖨️ Print Report</span>
+                </button>
+                <button class="btn-secondary" onclick="exportReportCSV()">
+                    <span>📥 Export Report</span>
+                </button>
+            </div>
 
-    <div id="message"></div>
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Teachers</h3>
+                    <div class="value" id="totalTeachers">-</div>
+                </div>
+                <div class="card">
+                    <h3>Total Timetable Entries</h3>
+                    <div class="value" id="totalTimetable">-</div>
+                </div>
+                <div class="card">
+                    <h3>Total Substitutions</h3>
+                    <div class="value" id="totalSubstitutions">-</div>
+                </div>
+            </div>
 
-    <div class="action-bar">
-      <button class="print-btn" onclick="window.print()">
-        🖨️ Print Report
-      </button>
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Teachers Report -->
+            <div class="report-section">
+                <h2>Teachers Report</h2>
+                <div id="teachersLoading" class="loading">
+                    <div class="spinner"></div> Loading...
+                </div>
+                <div id="teachersReport"></div>
+            </div>
+
+            <!-- Timetable Report -->
+            <div class="report-section">
+                <h2>Timetable Report</h2>
+                <div id="timetableLoading" class="loading">
+                    <div class="spinner"></div> Loading...
+                </div>
+                <div id="timetableReport"></div>
+            </div>
+
+            <!-- Substitution Report -->
+            <div class="report-section">
+                <h2>Substitution Report</h2>
+                <div id="substitutionLoading" class="loading">
+                    <div class="spinner"></div> Loading...
+                </div>
+                <div id="substitutionReport"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="table-section">
-      <h2>Substitution Records</h2>
-      
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Day</th>
-            <th>Period</th>
-            <th>Class</th>
-            <th>Absent Teacher</th>
-            <th>Substitute Teacher</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="reportTable">
-          <tr>
-            <td colspan="7" class="loading"><div class="spinner"></div> Loading reports...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+    <script>
+        const API = "";
 
-<script>
-  const API = "http://localhost:3000";
+        // Check if token exists
+        window.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
 
-  // Check authentication
-  if (!localStorage.getItem("token")) {
-    window.location.href = "/";
-  }
+            loadReports();
+        });
 
-  function getToken() {
-    return localStorage.getItem("token");
-  }
+        async function loadReports() {
+            try {
+                const token = localStorage.getItem('token');
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
 
-  function navigateTo(path) {
-    window.location.href = path;
-  }
+                // Load Teachers
+                const teachersRes = await fetch(`${API}/api/teachers`, { headers });
+                const teachers = teachersRes.ok ? await teachersRes.json() : [];
+                renderTeachersReport(teachers);
+                document.getElementById('totalTeachers').textContent = teachers.length;
 
-  function logout() {
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  }
+                // Load Timetable
+                const timetableRes = await fetch(`${API}/api/timetable`, { headers });
+                const timetable = timetableRes.ok ? await timetableRes.json() : [];
+                renderTimetableReport(timetable);
+                document.getElementById('totalTimetable').textContent = timetable.length;
 
-  function showMessage(text, type) {
-    const message = document.getElementById("message");
-    message.innerText = text;
-    message.className = type;
-    
-    if (type === "success") {
-      setTimeout(() => {
-        message.innerHTML = "";
-        message.className = "";
-      }, 4000);
-    }
-  }
+                // Load Substitutions
+                const substitutionRes = await fetch(`${API}/api/substitution`, { headers });
+                const substitutions = substitutionRes.ok ? await substitutionRes.json() : [];
+                renderSubstitutionReport(substitutions);
+                document.getElementById('totalSubstitutions').textContent = substitutions.length;
 
-  function getStatusBadge(status) {
-    const statusLower = status.toLowerCase();
-    return `<span class="status-badge ${statusLower}">${status}</span>`;
-  }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showAlert('Error loading reports. Please try again.', 'error');
+            }
+        }
 
-  async function loadReports() {
-    try {
-      const response = await fetch(`${API}/api/substitution`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+        function renderTeachersReport(teachers) {
+            const container = document.getElementById('teachersReport');
+            document.getElementById('teachersLoading').style.display = 'none';
 
-      const table = document.getElementById("reportTable");
-      
-      if (!data || data.length === 0) {
-        table.innerHTML = `
-          <tr>
-            <td colspan="7" class="empty-state">
-              <div class="empty-state-icon">📋</div>
-              <p>No substitution reports found</p>
-              <p style="font-size: 12px;">Substitution records will appear here once they are created</p>
-            </td>
-          </tr>
-        `;
-        return;
-      }
+            if (teachers.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No teachers found</p></div>';
+                return;
+            }
 
-      table.innerHTML = "";
-      data.forEach((item) => {
-        const statusBadge = getStatusBadge(item.status || "Pending");
-        table.innerHTML += `
-          <tr>
-            <td>${item.date || "-"}</td>
-            <td>${item.day || "-"}</td>
-            <td>${item.period || "-"}</td>
-            <td>${item.class_name || "-"}</td>
-            <td>${item.absent_teacher_name || "-"}</td>
-            <td>${item.substitute_teacher_name || "-"}</td>
-            <td>${statusBadge}</td>
-          </tr>
-        `;
-      });
-    } catch (error) {
-      console.error("[v0] Error loading reports:", error);
-      document.getElementById("reportTable").innerHTML = `
-        <tr>
-          <td colspan="7" class="empty-state">
-            <div class="empty-state-icon">⚠️</div>
-            <p>Error loading reports</p>
-            <p style="font-size: 12px;">Please try again later</p>
-          </td>
-        </tr>
-      `;
-      showMessage("Error loading reports. Please try again.", "error");
-    }
-  }
+            let html = '<table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th></tr></thead><tbody>';
+            teachers.forEach(teacher => {
+                html += `<tr>
+                    <td>${teacher.id || '-'}</td>
+                    <td>${teacher.name || '-'}</td>
+                    <td>${teacher.email || '-'}</td>
+                    <td>${teacher.phone || '-'}</td>
+                    <td>${teacher.subject || '-'}</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
 
-  // Load reports on page load
-  loadReports();
-</script>
+        function renderTimetableReport(timetable) {
+            const container = document.getElementById('timetableReport');
+            document.getElementById('timetableLoading').style.display = 'none';
 
+            if (timetable.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No timetable entries found</p></div>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>Teacher</th><th>Subject</th><th>Day</th><th>Period</th><th>Class</th></tr></thead><tbody>';
+            timetable.forEach(entry => {
+                html += `<tr>
+                    <td>${entry.teacher_name || '-'}</td>
+                    <td>${entry.subject || '-'}</td>
+                    <td>${entry.day || '-'}</td>
+                    <td>${entry.period || '-'}</td>
+                    <td>${entry.class_name || '-'}</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderSubstitutionReport(substitutions) {
+            const container = document.getElementById('substitutionReport');
+            document.getElementById('substitutionLoading').style.display = 'none';
+
+            if (substitutions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No substitutions found</p></div>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>Absent Teacher</th><th>Date</th><th>Day</th><th>Period</th><th>Status</th></tr></thead><tbody>';
+            substitutions.forEach(sub => {
+                html += `<tr>
+                    <td>${sub.absent_teacher_name || '-'}</td>
+                    <td>${sub.date || '-'}</td>
+                    <td>${sub.day || '-'}</td>
+                    <td>${sub.period || '-'}</td>
+                    <td><span style="padding: 4px 8px; background-color: #e8f5e9; color: #2e7d32; border-radius: 4px; font-size: 12px;">${sub.status || 'Pending'}</span></td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        function exportReportCSV() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                // Create CSV content
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Add teachers report
+                csvContent += "TEACHERS REPORT\n";
+                csvContent += "ID,Name,Email,Phone,Subject\n";
+                
+                // Fetch and add data
+                fetch(`${API}/api/teachers`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(teachers => {
+                    teachers.forEach(teacher => {
+                        csvContent += `${teacher.id || '-'},${teacher.name || '-'},${teacher.email || '-'},${teacher.phone || '-'},${teacher.subject || '-'}\n`;
+                    });
+                    
+                    // Add timetable report
+                    csvContent += "\n\nTIMETABLE REPORT\n";
+                    csvContent += "Teacher,Subject,Day,Period,Class\n";
+                    
+                    return fetch(`${API}/api/timetable`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                })
+                .then(res => res.json())
+                .then(timetable => {
+                    timetable.forEach(entry => {
+                        csvContent += `${entry.teacher_name || '-'},${entry.subject || '-'},${entry.day || '-'},${entry.period || '-'},${entry.class_name || '-'}\n`;
+                    });
+                    
+                    // Add substitution report
+                    csvContent += "\n\nSUBSTITUTION REPORT\n";
+                    csvContent += "Absent Teacher,Date,Day,Period,Status\n";
+                    
+                    return fetch(`${API}/api/substitution`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                })
+                .then(res => res.json())
+                .then(substitutions => {
+                    substitutions.forEach(sub => {
+                        csvContent += `${sub.absent_teacher_name || '-'},${sub.date || '-'},${sub.day || '-'},${sub.period || '-'},${sub.status || 'Pending'}\n`;
+                    });
+                    
+                    // Download CSV
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodeURI(csvContent));
+                    link.setAttribute('download', 'reports_' + new Date().toISOString().split('T')[0] + '.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showAlert('Report exported successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error exporting report:', error);
+                    showAlert('Error exporting report. Please try again.', 'error');
+                });
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                showAlert('Error exporting report. Please try again.', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            const alertHTML = `
+                <div id="${alertId}" class="alert alert-${type}">
+                    <span>${message}</span>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', alertHTML);
+
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
 </body>
 </html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Management - Teacher Substitution System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #2d3561 0%, #1e1f3f 100%);
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            padding: 0 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 15px 30px;
+            color: #a0a9d1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-size: 15px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #2d3561;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #2d3561;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #2d3561;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .delete-btn {
+            padding: 8px 16px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        /* Message Styles */
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            margin: 5px 0;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 20px 0;
+            }
+
+            .sidebar .logo h1 {
+                font-size: 14px;
+            }
+
+            .nav-link {
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+                padding: 10px;
+            }
+
+            .header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>TSM</h1>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="teachers.html" class="nav-link">Teachers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="timetable.html" class="nav-link active">Timetable</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="substitution.html" class="nav-link">Substitutions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">Reports</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Timetable Management</h1>
+                <p>Manage class schedules and teacher assignments</p>
+            </div>
+
+            <!-- Messages -->
+            <div id="successMessage" class="alert alert-success"></div>
+            <div id="errorMessage" class="alert alert-error"></div>
+
+            <!-- Add Timetable Form -->
+            <div class="card">
+                <h2>Add New Timetable Entry</h2>
+                <form id="timetableForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="teacher">Teacher *</label>
+                            <select id="teacher" required>
+                                <option value="">Select a teacher</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <input type="text" id="subject" placeholder="e.g., Python, Mathematics" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="day">Day *</label>
+                            <select id="day" required>
+                                <option value="">Select a day</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="period">Period *</label>
+                            <input type="number" id="period" placeholder="e.g., 1, 2, 3" min="1" max="12" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="className">Class Name *</label>
+                            <input type="text" id="className" placeholder="e.g., BCA-A, BCS-B" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Timetable</button>
+                        <button type="reset" class="btn btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Timetable List -->
+            <div class="card">
+                <h2>Timetable Entries</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Teacher</th>
+                                <th>Subject</th>
+                                <th>Day</th>
+                                <th>Period</th>
+                                <th>Class Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableTable">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon">📅</div>
+                                    <p>Loading timetables...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API = "http://localhost:3000";
+
+        // Load teachers on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            loadTeachers();
+            loadTimetables();
+        });
+
+        // Form submission
+        document.getElementById("timetableForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            addTimetable();
+        });
+
+        // Load teachers for dropdown
+        async function loadTeachers() {
+            try {
+                const response = await fetch(`${API}/api/teachers`);
+                const teachers = await response.json();
+
+                const teacherSelect = document.getElementById("teacher");
+                teacherSelect.innerHTML = '<option value="">Select a teacher</option>';
+
+                if (teachers && teachers.length > 0) {
+                    teachers.forEach((teacher) => {
+                        const option = document.createElement("option");
+                        option.value = teacher.id;
+                        option.textContent = teacher.name || "Unknown";
+                        teacherSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("[v0] Error loading teachers:", error);
+                showError("Failed to load teachers");
+            }
+        }
+
+        // Add timetable entry
+        async function addTimetable() {
+            const teacherId = document.getElementById("teacher").value;
+            const subject = document.getElementById("subject").value.trim();
+            const day = document.getElementById("day").value;
+            const period = document.getElementById("period").value;
+            const className = document.getElementById("className").value.trim();
+
+            // Validation
+            if (!teacherId || !subject || !day || !period || !className) {
+                showError("All fields are required");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API}/api/timetable`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        teacher_id: parseInt(teacherId),
+                        subject: subject,
+                        day: day,
+                        period: parseInt(period),
+                        class_name: className,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to add timetable");
+                }
+
+                showSuccess("Timetable entry added successfully");
+                document.getElementById("timetableForm").reset();
+                loadTimetables();
+            } catch (error) {
+                console.error("[v0] Error adding timetable:", error);
+                showError("Error adding timetable entry");
+            }
+        }
+
+        // Load all timetables
+        async function loadTimetables() {
+            try {
+                const response = await fetch(`${API}/api/timetable`);
+                const timetables = await response.json();
+
+                const table = document.getElementById("timetableTable");
+                
+                if (!timetables || timetables.length === 0) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state-icon">📅</div>
+                                <p>No timetables found</p>
+                                <p style="font-size: 12px;">Add your first timetable entry using the form above</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                table.innerHTML = "";
+                timetables.forEach((timetable) => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${timetable.id}</td>
+                            <td>${timetable.teacher_name || "-"}</td>
+                            <td>${timetable.subject || "-"}</td>
+                            <td>${timetable.day || "-"}</td>
+                            <td>${timetable.period || "-"}</td>
+                            <td>${timetable.class_name || "-"}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteTimetable(${timetable.id})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("[v0] Error loading timetables:", error);
+                document.getElementById("timetableTable").innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <p>Error loading timetables</p>
+                            <p style="font-size: 12px;">Please try again later</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Delete timetable entry
+        async function deleteTimetable(id) {
+            if (!confirm("Are you sure you want to delete this timetable entry?")) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API}/api/timetable/${id}`, {
+                    method: "DELETE",
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete timetable");
+                }
+
+                showSuccess("Timetable entry deleted successfully");
+                loadTimetables();
+            } catch (error) {
+                console.error("[v0] Error deleting timetable:", error);
+                showError("Error deleting timetable entry");
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.getElementById("successMessage");
+            successDiv.textContent = message;
+            successDiv.classList.add("show");
+
+            setTimeout(() => {
+                successDiv.classList.remove("show");
+            }, 4000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById("errorMessage");
+            errorDiv.textContent = message;
+            errorDiv.classList.add("show");
+
+            setTimeout(() => {
+                errorDiv.classList.remove("show");
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
