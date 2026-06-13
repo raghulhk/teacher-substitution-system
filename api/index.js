@@ -1,12 +1,11 @@
-const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const teacherRoutes = require("../routes/teacherRoutes");
 const timetableRoutes = require("../routes/timetableRoutes");
 const substitutionRoutes = require("../routes/substitutionRoutes");
 const authRoutes = require("../routes/authRoutes");
-
 const app = express();
 
 app.use(cors());
