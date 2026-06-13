@@ -6,11 +6,11 @@ const teacherRoutes = require("../routes/teacherRoutes");
 const timetableRoutes = require("../routes/timetableRoutes");
 const substitutionRoutes = require("../routes/substitutionRoutes");
 const authRoutes = require("../routes/authRoutes");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-const path = require("path");
 app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/api/teachers", teacherRoutes);
